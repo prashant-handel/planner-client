@@ -1,0 +1,28 @@
+@use 'variables' as *;
+
+.form-card {
+    width: 25em;
+    padding: 2rem 1rem;
+    gap: 3rem;
+    background: $bg-10;
+}
+
+.login-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: $bg-200;
+}
+
+.login-page {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.logo {
+    border-radius: 1rem;
+    width: 15%;
+}

@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'variables' as *;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; overflow: hidden; }
+
+.cursor {
+    cursor: pointer;
+}
+
+.bold-text {
+    font-weight: 600;
+}
+
+.blue-color {
+    color: #005cbb;
+}

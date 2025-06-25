@@ -1,0 +1,74 @@
+<div class="signup-container">
+    <img src="/assets/images/task-logo.png" alt="Logo" class="logo">
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <mat-card class="form-card">
+            <mat-card-title>Sign up</mat-card-title>
+
+            <div fxLayout="row" fxLayoutGap="1rem" fxLayoutAlign="space-between center" class="full-width">
+                <mat-form-field fxFlex="32">
+                    <mat-label>Firstname</mat-label>
+                    <input matInput type="text" formControlName="firstName">
+                    <mat-error *ngIf="signupForm.get('firstname')?.hasError('required')">Firstname is required</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field fxFlex="32">
+                    <mat-label>Middlename</mat-label>
+                    <input matInput type="text" formControlName="middleName">
+                </mat-form-field>
+    
+                <mat-form-field fxFlex="32">
+                    <mat-label>Lastname</mat-label>
+                    <input matInput type="text" formControlName="lastName">
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="full-width">
+                <mat-form-field fxFlex="49">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email">
+                    <mat-error *ngIf="signupForm.get('email')?.hasError('required')">Email is required</mat-error>
+                    <mat-error *ngIf="signupForm.get('email')?.hasError('email')">Invalid email</mat-error>
+                </mat-form-field>
+    
+                <mat-form-field fxFlex="49">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" formControlName="password">
+                    <mat-error *ngIf="signupForm.get('password')?.hasError('required')">Password is required</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="full-width">
+                <mat-form-field fxFlex="49">
+                    <mat-label>Age</mat-label>
+                    <input matInput type="number" formControlName="age" min="1" max="120">
+                    <mat-error *ngIf="signupForm.get('age')?.hasError('required')">Age is required</mat-error>
+                </mat-form-field>
+                <mat-radio-group fxFlex="49" aria-label="Gender" formControlName="gender">
+                    <mat-radio-button value="male">Male</mat-radio-button>
+                    <mat-radio-button value="female">Female</mat-radio-button>
+                    <mat-radio-button value="other">Other</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+
+            <button 
+            mat-stroked-button
+            color="primary" 
+            type="submit" 
+            [disabled]="isSubmitting || signupForm.invalid"
+
+            >
+            Sign up
+            </button>
+
+            <span>
+                Already have an account?
+                <span class="cursor bold-text blue-color" (click)="gotoLogin()" (keydown.enter)="gotoLogin()">Login</span>
+            </span>
+
+            @if(errorMessage) {
+                <mat-error>{{ errorMessage }}</mat-error>
+            }
+        </mat-card>
+    </form>
+</div>

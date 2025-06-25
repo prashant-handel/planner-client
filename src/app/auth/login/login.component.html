@@ -1,0 +1,38 @@
+<div class="login-container">
+    <img src="assets/images/task-logo.png" alt="Logo" class="logo">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-card class="form-card">
+            <mat-card-title>Login</mat-card-title>
+
+            <mat-form-field class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email">
+                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email is required</mat-error>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Invalid email</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password">
+                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password is required</mat-error>
+            </mat-form-field>
+
+            <button 
+            mat-stroked-button
+            color="primary" 
+            type="submit" 
+            [disabled]="isSubmitting">
+            Login
+            </button>
+
+            <span>
+                Don’t have an account?
+                <span class="cursor bold-text blue-color" (click)="gotoSignup()" (keydown.enter)="gotoSignup()">Sign up</span>
+            </span>
+
+            @if(errorMessage) {
+                <mat-error>{{ errorMessage }}</mat-error>
+            }
+        </mat-card>
+    </form>
+</div>
