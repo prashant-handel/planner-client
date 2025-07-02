@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +25,30 @@ export class AuthService {
     return this.http.get(`${this.baseUrl}/logout`, { withCredentials: true });
   }
 
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('userId');
+  isAuthenticated(): Observable<boolean> {
+    const userInLocalStorage = !!localStorage.getItem('userId');
+    if(!userInLocalStorage) {
+      return of(false);
+    }
+
+    return new Observable<boolean> ((observer) => {
+      this.http.get(`${this.baseUrl}/check`).subscribe({
+      next: (res:any) => {
+          if(res?.status) {
+            observer.next(true);
+            observer.complete();
+          }
+          else {
+            observer.next(false);
+            observer.complete();
+          }
+        },
+        error: (_err) => {
+          observer.next(false);
+          observer.complete();
+        }
+      });
+    });
   }
 
   setUser(userId: string) {

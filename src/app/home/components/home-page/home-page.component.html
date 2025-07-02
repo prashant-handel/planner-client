@@ -1,13 +1,88 @@
-<div class="header" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
-    <img class="logo" src="assets/images/task-logo.png" alt="Logo" />
-    <h1 class="title">Task Manager</h1>
+<div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+    <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+        <img class="logo" src="assets/images/task-logo.png" alt="Logo" />
+        <h1 class="title">Task Manager</h1>
+    </span>
+    <img class="cursor" src="assets/images/SignOut.svg" alt="logout" (click)="logout()" (keydown.enter)="logout()" />
 </div>
 
-<div class="table-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap=".5rem">
-        <div class="task-list">
-            Task list
-        </div>
-        <div class="toggle-btn">
-            
-        </div>
+<div class="table-container">
+    <div class="toggle-parent" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap=".5rem">
+            <div class="long-text bold-text">
+                Task list
+            </div>
+            <div class="right-template">
+                <ng-container [ngTemplateOutlet]="rightTemplate"></ng-container>
+            </div>
+    </div>
+    <div class="table-content">
+        <ng-container [ngTemplateOutlet]="headerTemplate"></ng-container>
+        @for(task of taskList; track task?._id;let rowIndex= $index;) {
+            <ng-container [ngTemplateOutlet]="rowTemplate" [ngTemplateOutletContext]="{ task: task, rowIndex: rowIndex }"></ng-container>
+        }
+    </div>
 </div>
+
+<ng-template #rightTemplate>
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap=".5rem">
+        <span class="add-task-btn blue-color">
+            <img src="assets/images/add_task.svg" alt="Logo" /> Add task
+        </span>
+    </div>
+</ng-template>
+
+<ng-template #headerTemplate>
+    <div class="table-header">
+        @for(header of tableOptions.headers; track header?.key;) {
+        <span class="general-text bold-text table-head" [style.width]="header?.width+'%'">
+            {{ header?.name }}
+        </span>
+        }
+    </div>
+</ng-template>
+
+<ng-template #rowTemplate let-task="task" let-rowIndex="rowIndex">
+    <div class="table-row">
+        @for(header of tableOptions.headers; track header?.key;) {
+            @if(header?.key === 'checkbox') {
+                <span class="general-text table-data center-center" [style.width]="header?.width+'%'">
+                    <img 
+                    [src]="(task?.progress == 'completed') ? completedImg : (task?.progress == 'in_progress') ? inProgressImg : notCompletedImg" 
+                    alt="progress" (click)="completeTask(task)" (keydown.enter)="completeTask(task)"
+                    [style.cursor]="(task?.progress == 'completed') ? 'default' : 'pointer'">
+                </span>
+            } @else if(header?.key === 'taskName') {
+                <span class="general-text table-data" [contentEditable]="true" [style.width]="header?.width+'%'">
+                    {{ task?.taskName }}
+                </span>
+            } @else if(header?.key === 'dueDate') {
+                <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    {{ task?.dueDate | date: 'longDate' }}
+                </span>
+            } @else if(header?.key === 'priority') {
+                <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    {{ task?.priority | titlecase }}
+                </span>
+            } @else if(header?.key === 'progress') {
+                <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    {{ task?.progress | titlecase | removeUnderscore }}
+                </span>
+            } @else if(header?.key === 'assignees') {
+                <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    <ng-container [ngTemplateOutlet]="groupAvatar" [ngTemplateOutletContext]="{users: task?.assignees}"></ng-container>
+                </span>
+            }
+        }
+    </div>
+
+
+    <ng-template #groupAvatar let-users="users">
+        <div style="display: flex; align-items: center;">
+        <span fxFlex="100" fxLayout="row">
+            <app-avatar *ngFor="let user of users?.slice(0,3); let i=index;" class="grouped-avatar-item" [config]="getAvatarConfig(user)"></app-avatar>
+        </span>
+        <span *ngIf="users?.length > 3" class="other-users general-text">
+            +{{users?.length - 3}}
+        </span>
+        </div>
+    </ng-template>

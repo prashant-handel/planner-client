@@ -12,5 +12,37 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; overflow: h
 }
 
 .blue-color {
-    color: #005cbb;
+    color: #00a3e0;
+}
+
+.heading-text {
+    font-size: 1.5rem;
+    line-height: 2.25rem;
+}
+
+.general-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.gray-color {
+    color: $bg-400;
+}
+
+.small-text {
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+}
+
+.long-text {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+}
+
+.bold-text {
+    font-weight: 600;
+}
+
+.cursor {
+    cursor: pointer !important;
 }

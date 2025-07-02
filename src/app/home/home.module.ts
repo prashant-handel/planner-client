@@ -5,17 +5,21 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { RemoveUnderscorePipe } from './components/home-page/pipes/remove-underscore.pipe';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
-    HomePageComponent
+    HomePageComponent,
+    RemoveUnderscorePipe
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
     MatSnackBarModule,
     FlexLayoutModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    SharedModule
   ]
 })
 

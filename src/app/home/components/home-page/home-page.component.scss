@@ -17,7 +17,6 @@
 
 .header {
     padding: 1rem;
-    background: $bg-200;
 }
 
 .grid-container {
@@ -28,6 +27,41 @@
     box-sizing: border-box;
 }
 
-.table-header {
-    
+.table {
+    &-header {
+        display: flex;
+        height: 3rem;
+        align-items: center;
+        background: $bg-200;
+    }
+
+    &-row {
+        display: flex;
+        height: 3rem;
+        border-bottom: 1px solid $bg-300;
+        align-items: center;
+
+        &:hover {
+            background: $bg-100;
+        }
+    }
+}
+
+.toggle-parent {
+    padding: 1rem;
+    border-bottom: 1px solid $bg-300;
+}
+
+.center-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grouped-avatar-item:not(:first-child) {
+    margin-left: -.5rem;
+}
+
+.add-task-btn > img {
+    width: .8rem;
 }
