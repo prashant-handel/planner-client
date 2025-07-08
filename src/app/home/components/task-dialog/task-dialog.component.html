@@ -1,0 +1,144 @@
+<div class="dialog-container">
+    <div class="dialog-header">
+        <mat-icon class="cursor" fontIcon="close" (click)="closeDialog()" (keydown.enter)="closeDialog()"></mat-icon>
+    </div>
+    <form  (ngSubmit)="onSubmit()">
+        <div class="dialog-content">
+            <div class="dialog-content-header">
+                <h2>Add Task</h2>
+            </div>
+            <div fxLayout="column" fxLayoutGap=".5rem" [formGroup]="taskForm">
+                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem" fxFlex="100" class="name-parent">
+                        <img 
+                        [src]="(taskForm.get('progress')?.value == 'completed') ? completedImg : 
+                        (taskForm.get('progress')?.value == 'in_progress') ? inProgressImg : notCompletedImg" 
+                        alt="progress" >
+                        @if(showNameInput) {
+                            <mat-form-field>
+                                <input matInput #nameInput type="text" formControlName="name" (keydown.enter)="showNameInput = true" (blur)="showNameInput = false">
+                            </mat-form-field>
+                        } 
+                        @else {
+                            <span class="general-text" (click)="showNameInput = true" (keydown.enter)="showNameInput = true">
+                                {{ this.taskForm.value.name || 'Click to add task name' }}
+                            </span>
+                        }
+                        
+                </div>
+                <div fxLayout="row" fxFlex="100" fxLayoutGap="1rem" fxLayoutAlign="space-between center">
+                    <mat-form-field fxFlex="50">
+                        <mat-label>Progress</mat-label>
+                        <mat-select placeholder="Select Progress" formControlName="progress">
+                            <mat-select-trigger>
+                                <span fxFlex="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                                    <img [src]="(taskForm.get('progress')?.value == 'not_started') ? notCompletedImg 
+                                            : (taskForm.get('progress')?.value == 'in_progress') ? inProgressImg 
+                                            : completedImg" 
+                                        [alt]="taskForm.get('progress')?.value">
+                                    <span class="general-text">
+                                    {{ taskForm.get('progress')?.value | titlecase | removeUnderscore }}
+                                    </span>
+                                </span>
+                            </mat-select-trigger>
+
+                            @for(progress of progressList; track progress?.value) {
+                                <mat-option [value]="progress.value">
+                                    <span fxFlex="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                                        <img [src]="(progress?.value == 'not_started') ? notCompletedImg : (progress?.value == 'in_progress') ? inProgressImg : completedImg" [alt]="progress?.name">
+                                        <span class="general-text">
+                                            {{ progress?.name | titlecase | removeUnderscore }}
+                                        </span>
+                                    </span>
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="50">
+                        <mat-label>Priority</mat-label>
+                        <mat-select placeholder="Select Priority" formControlName="priority">
+                            <mat-select-trigger>
+                                <span fxFlex="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                                    <img [src]="'/assets/images/'+taskForm.get('priority')?.value+'.svg'"
+                                        [alt]="taskForm.get('priority')?.value">
+                                    <span class="general-text">
+                                    {{ taskForm.get('priority')?.value | titlecase | removeUnderscore }}
+                                    </span>
+                                </span>
+                            </mat-select-trigger>
+                            @for(priority of priorityList; track priority?.value) {
+                                <mat-option [value]="priority.value">
+                                    <span fxFlex="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                                        <img [src]="'/assets/images/'+priority?.value+'.svg'" [alt]="priority?.name">
+                                        <span class="general-text">
+                                            {{ priority?.name }}
+                                        </span>
+                                    </span>
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxFlex="100" fxLayoutGap="1rem" fxLayoutAlign="space-between center">
+                    <mat-form-field fxFlex="50">
+                        <mat-label>Start date</mat-label>
+                        <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="currentDate" [max]="taskForm.get('dueDate')?.value">
+                        <mat-hint>MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startPicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="50">
+                        <mat-label>Due date</mat-label>
+                        <input matInput [matDatepicker]="duePicker" formControlName="dueDate"  [min]="taskForm.get('startDate')?.value || currentDate">
+                        <mat-hint>MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="duePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #duePicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxFlex="100">
+                    <mat-form-field fxFlex="100">
+                        <mat-label>Description</mat-label>
+                        <textarea matInput
+                        cdkTextareaAutosize
+                        #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="2"
+                        cdkAutosizeMaxRows="5"
+                        formControlName="description"
+                        >
+                        </textarea>
+                    </mat-form-field>
+                </div>
+                <div fxLayout="row" fxFlex="100">
+                    <mat-form-field class="multi-select-autocomplete" style="width: 100%;">
+                        <mat-chip-grid #chipList>
+                            @for(user of selectedUsers; track user) {
+                                <mat-chip-row
+                                [removable]="true"
+                                (removed)="removeUser(user)">
+                                {{ user.firstName }} {{ user.lastName }}
+                                <mat-icon matChipRemove>cancel</mat-icon>
+                                </mat-chip-row>
+                            }
+                            <input
+                            [formControl]="userSearchControl"
+                            [matAutocomplete]="auto"
+                            [matChipInputFor]="chipList"
+                            [matChipInputAddOnBlur]="false"
+                            [matChipInputSeparatorKeyCodes]="[]"
+                            placeholder="Search users..." />
+                        </mat-chip-grid>
+                        
+                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectUser($event.option.value)" [displayWith]="displayUserFn">
+                            <mat-option *ngFor="let user of filteredUsers" [value]="user">
+                            {{ user.firstName }} {{ user.lastName }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button mat-button type="button" (click)="closeDialog()" (keydown.enter)="closeDialog()">Cancel</button>
+            <button  mat-flat-button color="primary" type="submit">Save</button>
+        </div>
+    </form>
+</div>

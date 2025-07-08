@@ -62,6 +62,20 @@
     margin-left: -.5rem;
 }
 
-.add-task-btn > img {
-    width: .8rem;
+.add-task-btn {
+    align-items: center;
+    display: flex;
+    gap: .5rem;
+    border: 1px solid $bg-300;
+    padding: .25rem .5rem;
+    border-radius: .5rem;
+    cursor: pointer;
+
+    & > img {
+        width: .8rem;
+    }
+
+    &:hover {
+        background: $bg-100;
+    }
 }

@@ -24,8 +24,8 @@
 </div>
 
 <ng-template #rightTemplate>
-    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap=".5rem">
-        <span class="add-task-btn blue-color">
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap=".5rem" class="add-task-btn" (click)="openTaskDialog()" (keydown.enter)="openTaskDialog()" matTooltip="Add new task">
+        <span class="blue-color">
             <img src="assets/images/add_task.svg" alt="Logo" /> Add task
         </span>
     </div>
@@ -49,11 +49,11 @@
                     <img 
                     [src]="(task?.progress == 'completed') ? completedImg : (task?.progress == 'in_progress') ? inProgressImg : notCompletedImg" 
                     alt="progress" (click)="completeTask(task)" (keydown.enter)="completeTask(task)"
-                    [style.cursor]="(task?.progress == 'completed') ? 'default' : 'pointer'">
+                    [style.cursor]="(task?.progress == 'completed') ? 'default' : 'pointer'" >
                 </span>
             } @else if(header?.key === 'taskName') {
-                <span class="general-text table-data" [contentEditable]="true" [style.width]="header?.width+'%'">
-                    {{ task?.taskName }}
+                <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    {{ task?.name }}
                 </span>
             } @else if(header?.key === 'dueDate') {
                 <span class="general-text table-data" [style.width]="header?.width+'%'">

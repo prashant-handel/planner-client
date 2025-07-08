@@ -32,7 +32,7 @@ export class AuthService {
     }
 
     return new Observable<boolean> ((observer) => {
-      this.http.get(`${this.baseUrl}/check`).subscribe({
+      this.http.get(`${this.baseUrl}/check`, { withCredentials: true }).subscribe({
       next: (res:any) => {
           if(res?.status) {
             observer.next(true);

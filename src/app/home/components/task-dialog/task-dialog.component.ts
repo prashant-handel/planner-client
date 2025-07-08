@@ -1,0 +1,134 @@
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { HomeService } from '../../services/home.service';
+import { HomeGeneralConstants } from '../../constants/home-general.constants';
+import { debounceTime } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+@Component({
+  selector: 'app-task-dialog',
+  standalone: false,
+  templateUrl: './task-dialog.component.html',
+  styleUrl: './task-dialog.component.scss'
+})
+export class TaskDialogComponent implements AfterViewChecked, OnInit {
+  @ViewChild('nameInput') nameInputRef: ElementRef<HTMLInputElement> | undefined;
+  
+  progressList = HomeGeneralConstants.progressList;
+  priorityList = HomeGeneralConstants.priorityList;
+
+  notCompletedImg: string = 'assets/images/todo-not-completed.svg';
+  inProgressImg: string = 'assets/images/todo-in-progress.svg';
+  completedImg: string = 'assets/images/todo-completed.svg';
+
+  taskForm:FormGroup;
+
+  showNameInput: boolean = false;
+  currentDate: Date = new Date();
+  selectedUsers: any[] = [];
+  allUsers: any[] = [];
+  filteredUsers: any[] = [];
+  userSearchControl = new FormControl();
+
+
+  constructor(
+    private readonly dialogRef: MatDialogRef<TaskDialogComponent>,
+    private readonly fb: FormBuilder,
+    private readonly homeService: HomeService,
+    private readonly snackBar: MatSnackBar
+  ) {
+    this.taskForm = this.fb.group({
+      progress: ['', Validators.required],
+      priority: ['', Validators.required],
+      name: ['', Validators.required],
+      dueDate: ['', Validators.required],
+      startDate: [null],
+      description: [null],
+      assignees: [null]
+    });
+  }
+
+  ngOnInit() {
+    this.userSearchControl?.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(value => {
+
+        if (!value) {
+          this.filteredUsers = [];
+          return;
+        }
+
+        this.homeService.getUserList(value).subscribe((res: any) => {
+          this.allUsers = res?.users ?? [];
+          const selectedIds = this.selectedUsers.map(u => u._id);
+          this.filteredUsers = this.allUsers.filter(u => !selectedIds.includes(u._id));
+        });
+      });
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
+  }
+
+  onSubmit() {
+    let payload = this.taskForm?.value;
+
+    payload.assignees = this.selectedUsers.map(u => u._id);
+
+    this.homeService.createTask(payload).subscribe(
+      (res: any) => {
+        if(res?.status) {
+          this.closeDialog();
+          this.snackBar.open('Task created successfully', 'Close', {
+            duration: 2000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top'
+          });
+        }
+      },
+      (error) => {
+        this.snackBar.open(error?.message ?? 'Error creating task', 'Close', {
+          duration: 2000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
+      }
+    )
+  }
+
+  ngAfterViewChecked() {
+    if (this.showNameInput && this.nameInputRef) {
+      setTimeout(() => {
+        this.nameInputRef?.nativeElement.focus();
+      }, 0);
+    }
+  }
+
+  displayUserFn(user: any): string {
+    return user ? `${user.firstName} ${user.lastName}` : '';
+  }
+  
+  selectUser(user: any) {
+    if (!this.selectedUsers.find(u => u._id === user._id)) {
+      this.selectedUsers.push(user);
+    }
+    this.userSearchControl.setValue('');
+  }
+  
+  removeUser(user: any) {
+    this.selectedUsers = this.selectedUsers.filter(u => u._id !== user._id);
+  }
+  
+}
+
+// {
+//     "name": "Task 6",
+//     "startDate": "2025-06-25T00:00:00.000Z",
+//     "dueDate": "2025-06-28T00:00:00.000Z",
+//     "progress": "not_started",
+//     "priority": "urgent",
+//     "description": "some description 123",
+//     "assigner": "6857b62d3124a31d6985b81a",
+//     "assignees": ["6857bd4474b82ba0aa4fa414", "6857bd6874b82ba0aa4fa416"]
+// }

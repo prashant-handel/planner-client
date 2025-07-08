@@ -3,7 +3,9 @@ import { HomeService } from '../../services/home.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Task } from '../../../shared/models/task.model';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router } from '@angular/router'; 
+import { MatDialog } from '@angular/material/dialog';
+import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
 
 @Component({
   selector: 'app-home-page',
@@ -36,7 +38,8 @@ export class HomePageComponent {
     private readonly homeService: HomeService,
     private readonly snackBar: MatSnackBar,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly dialog: MatDialog
   ) {
     this.getAllTasks();
   }
@@ -99,5 +102,20 @@ export class HomePageComponent {
     localStorage.clear();
     this.authService.logout();
     this.router.navigate(['/auth/login']);
+  }
+
+  openTaskDialog() {
+    const dialogRef = this.dialog.open(TaskDialogComponent, {
+      width: '50vw',
+      enterAnimationDuration: 300,
+      exitAnimationDuration: 300,
+      disableClose: true,
+      data: { task: null }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if(result) {
+        this.getAllTasks();
+      }
+    });
   }
 }

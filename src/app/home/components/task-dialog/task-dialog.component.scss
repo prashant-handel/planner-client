@@ -1,0 +1,23 @@
+.dialog {
+    &-header {
+        display: flex;
+        justify-content: flex-end;
+        padding: 1rem;
+    }
+
+    &-content {
+        padding: 0 1rem;
+    }
+
+    &-footer {
+        display: flex;
+        justify-content: end;
+        padding: 1rem;
+        gap: 1rem;
+    }
+}
+
+.name-parent {
+    height: 5rem;
+    min-height: 5rem;
+}
