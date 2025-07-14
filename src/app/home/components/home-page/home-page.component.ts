@@ -26,7 +26,8 @@ export class HomePageComponent {
       { name: 'Due Date', key: 'dueDate', width: 20 },
       { name: 'Priority', key: 'priority', width: 25 },
       { name: 'Progress', key: 'progress', width: 25 },
-      { name: 'Assigned To', key: 'assignees', width: 20 }
+      { name: 'Assigned To', key: 'assignees', width: 20 },
+      { name: '', key: 'actions', width: 5 }
     ]
   };
   notCompletedImg: string = 'assets/images/todo-not-completed.svg';
@@ -104,13 +105,13 @@ export class HomePageComponent {
     this.router.navigate(['/auth/login']);
   }
 
-  openTaskDialog() {
+  openTaskDialog(task?: Task) {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
       width: '50vw',
       enterAnimationDuration: 300,
       exitAnimationDuration: 300,
       disableClose: true,
-      data: { task: null }
+      data: { task: task ?? null }
     });
     dialogRef.afterClosed().subscribe((result: any) => {
       if(result) {

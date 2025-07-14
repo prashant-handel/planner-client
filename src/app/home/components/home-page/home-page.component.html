@@ -15,8 +15,8 @@
                 <ng-container [ngTemplateOutlet]="rightTemplate"></ng-container>
             </div>
     </div>
+    <ng-container [ngTemplateOutlet]="headerTemplate"></ng-container>
     <div class="table-content">
-        <ng-container [ngTemplateOutlet]="headerTemplate"></ng-container>
         @for(task of taskList; track task?._id;let rowIndex= $index;) {
             <ng-container [ngTemplateOutlet]="rowTemplate" [ngTemplateOutletContext]="{ task: task, rowIndex: rowIndex }"></ng-container>
         }
@@ -60,16 +60,24 @@
                     {{ task?.dueDate | date: 'longDate' }}
                 </span>
             } @else if(header?.key === 'priority') {
+                <img [src]="'/assets/images/'+task?.priority+'.svg'" [alt]="task?.priority">
                 <span class="general-text table-data" [style.width]="header?.width+'%'">
                     {{ task?.priority | titlecase }}
                 </span>
             } @else if(header?.key === 'progress') {
-                <span class="general-text table-data" [style.width]="header?.width+'%'">
-                    {{ task?.progress | titlecase | removeUnderscore }}
+                <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                    <img [src]="(task?.progress?.value == 'not_started') ? notCompletedImg : (task?.progress?.value == 'in_progress') ? inProgressImg : completedImg" [alt]="task?.progress?.value" >
+                    <span class="general-text table-data" [style.width]="header?.width+'%'">
+                        {{ task?.progress | titlecase | removeUnderscore }}
+                    </span>
                 </span>
             } @else if(header?.key === 'assignees') {
                 <span class="general-text table-data" [style.width]="header?.width+'%'">
                     <ng-container [ngTemplateOutlet]="groupAvatar" [ngTemplateOutletContext]="{users: task?.assignees}"></ng-container>
+                </span>
+            } @else if(header?.key === 'actions') {
+                <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    <img src="assets/images/edit.svg" alt="edit" class="cursor" (click)="openTaskDialog(task)" (keydown.enter)="openTaskDialog(task)" />
                 </span>
             }
         }

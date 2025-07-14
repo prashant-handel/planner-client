@@ -1,6 +1,6 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HomeService } from '../../services/home.service';
 import { HomeGeneralConstants } from '../../constants/home-general.constants';
 import { debounceTime } from 'rxjs';
@@ -30,13 +30,15 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
   allUsers: any[] = [];
   filteredUsers: any[] = [];
   userSearchControl = new FormControl();
+  isEdit: boolean = false;
 
 
   constructor(
     private readonly dialogRef: MatDialogRef<TaskDialogComponent>,
     private readonly fb: FormBuilder,
     private readonly homeService: HomeService,
-    private readonly snackBar: MatSnackBar
+    private readonly snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.taskForm = this.fb.group({
       progress: ['', Validators.required],
@@ -47,6 +49,12 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
       description: [null],
       assignees: [null]
     });
+
+    if(this.data?.task) {
+      this.taskForm.patchValue(this.data?.task);
+      this.selectedUsers = this.data?.task?.assignees ?? [];
+      this.isEdit = true;
+    }
   }
 
   ngOnInit() {
@@ -72,12 +80,17 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
   }
 
   onSubmit() {
+    if(this.isEdit) {
+      this.updateTask();
+      return;
+    }
+
     let payload = this.taskForm?.value;
 
     payload.assignees = this.selectedUsers.map(u => u._id);
 
-    this.homeService.createTask(payload).subscribe(
-      (res: any) => {
+    this.homeService.createTask(payload).subscribe({
+      next: (res: any) => {
         if(res?.status) {
           this.closeDialog();
           this.snackBar.open('Task created successfully', 'Close', {
@@ -87,14 +100,42 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
           });
         }
       },
-      (error) => {
+      error: (error: any) => {
         this.snackBar.open(error?.message ?? 'Error creating task', 'Close', {
           duration: 2000,
           horizontalPosition: 'right',
           verticalPosition: 'top'
         });
       }
+     }
     )
+  }
+
+  updateTask() {
+    const payload = this.taskForm?.value;
+    payload.assignees = this.selectedUsers.map(u => u._id);
+    payload._id = this.data?.task?._id;
+    payload.assigner = this.data?.task?.assigner;
+
+    this.homeService.updateTask(payload).subscribe({
+      next: (res: any) => {
+        if(res?.status) {
+          this.closeDialog();
+          this.snackBar.open('Task updated successfully', 'Close', {
+            duration: 2000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top'
+          });
+        }
+      },
+      error: (error: any) => {
+        this.snackBar.open(error?.message ?? 'Error updating task', 'Close', {
+          duration: 2000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
+      }
+    })
   }
 
   ngAfterViewChecked() {

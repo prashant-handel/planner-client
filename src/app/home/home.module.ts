@@ -5,7 +5,7 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { RemoveUnderscorePipe } from './components/home-page/pipes/remove-underscore.pipe';
+import { RemoveUnderscorePipe } from './pipes/remove-underscore.pipe';
 import { SharedModule } from '../shared/shared.module';
 import { TaskDialogComponent } from './components/task-dialog/task-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
