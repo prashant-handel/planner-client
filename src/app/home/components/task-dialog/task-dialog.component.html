@@ -4,8 +4,8 @@
     </div>
     <form  (ngSubmit)="onSubmit()">
         <div class="dialog-content">
-            <div class="dialog-content-header">
-                <h2>Add Task</h2>
+            <div class="long-text bold-text">
+                {{ isEdit ? 'Edit Task' : 'Add Task' }}
             </div>
             <div fxLayout="column" fxLayoutGap=".5rem" [formGroup]="taskForm">
                 <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem" fxFlex="100" class="name-parent">
