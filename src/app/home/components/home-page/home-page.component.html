@@ -60,14 +60,16 @@
                     {{ task?.dueDate | date: 'longDate' }}
                 </span>
             } @else if(header?.key === 'priority') {
-                <img [src]="'/assets/images/'+task?.priority+'.svg'" [alt]="task?.priority">
-                <span class="general-text table-data" [style.width]="header?.width+'%'">
-                    {{ task?.priority | titlecase }}
+                <span [style.width]="header?.width+'%'" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                    <img [src]="'/assets/images/'+task?.priority+'.svg'" [alt]="task?.priority">
+                    <span class="general-text table-data">
+                        {{ task?.priority | titlecase }}
+                    </span>
                 </span>
             } @else if(header?.key === 'progress') {
-                <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
+                <span [style.width]="header?.width+'%'" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap=".5rem">
                     <img [src]="(task?.progress?.value == 'not_started') ? notCompletedImg : (task?.progress?.value == 'in_progress') ? inProgressImg : completedImg" [alt]="task?.progress?.value" >
-                    <span class="general-text table-data" [style.width]="header?.width+'%'">
+                    <span class="general-text table-data">
                         {{ task?.progress | titlecase | removeUnderscore }}
                     </span>
                 </span>
@@ -77,7 +79,9 @@
                 </span>
             } @else if(header?.key === 'actions') {
                 <span class="general-text table-data" [style.width]="header?.width+'%'">
-                    <img src="assets/images/edit.svg" alt="edit" class="cursor" (click)="openTaskDialog(task)" (keydown.enter)="openTaskDialog(task)" />
+                    @if(task?.assigner?._id === userId) {
+                        <img src="assets/images/edit.svg" alt="edit" class="cursor" (click)="openTaskDialog(task)" (keydown.enter)="openTaskDialog(task)" />
+                    }
                 </span>
             }
         }

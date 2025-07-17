@@ -6,6 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router'; 
 import { MatDialog } from '@angular/material/dialog';
 import { TaskDialogComponent } from '../task-dialog/task-dialog.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-home-page',
@@ -33,7 +34,8 @@ export class HomePageComponent {
   notCompletedImg: string = 'assets/images/todo-not-completed.svg';
   inProgressImg: string = 'assets/images/todo-in-progress.svg';
   completedImg: string = 'assets/images/todo-completed.svg';
-  avatarConfig: any = { height: '1rem', width: '1rem', name: 'A', color: '#FF6B6B' }
+  avatarConfig: any = { height: '1rem', width: '1rem', name: 'A', color: '#FF6B6B' };
+  userId: string = '';
 
   constructor(
     private readonly homeService: HomeService,
@@ -43,6 +45,7 @@ export class HomePageComponent {
     private readonly dialog: MatDialog
   ) {
     this.getAllTasks();
+    this.userId = localStorage.getItem('userId') ?? '';
   }
 
   getAllTasks() {
@@ -100,9 +103,21 @@ export class HomePageComponent {
   }
 
   logout() {
-    localStorage.clear();
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '30vw',
+      data: {
+        title: 'Logout',
+        message: 'Are you sure you want to logout?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if(result) {
+        localStorage.clear();
+        this.authService.logout();
+        this.router.navigate(['/auth/login']);
+      }
+    });
   }
 
   openTaskDialog(task?: Task) {

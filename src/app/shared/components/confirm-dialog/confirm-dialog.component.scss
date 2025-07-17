@@ -1,0 +1,12 @@
+.dialog {
+    &-container {
+        padding: 1rem;
+    }
+
+    &-footer {
+        display: flex;
+        justify-content: end;
+        padding: 1rem;
+        gap: 1rem;
+    }
+}

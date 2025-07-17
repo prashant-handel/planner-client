@@ -75,8 +75,8 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
       });
   }
 
-  closeDialog() {
-    this.dialogRef.close();
+  closeDialog(result: boolean = false) {
+    this.dialogRef.close(result);
   }
 
   onSubmit() {
@@ -92,7 +92,7 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
     this.homeService.createTask(payload).subscribe({
       next: (res: any) => {
         if(res?.status) {
-          this.closeDialog();
+          this.closeDialog(true);
           this.snackBar.open('Task created successfully', 'Close', {
             duration: 2000,
             horizontalPosition: 'right',
@@ -120,7 +120,7 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
     this.homeService.updateTask(payload).subscribe({
       next: (res: any) => {
         if(res?.status) {
-          this.closeDialog();
+          this.closeDialog(true);
           this.snackBar.open('Task updated successfully', 'Close', {
             duration: 2000,
             horizontalPosition: 'right',
@@ -160,16 +160,4 @@ export class TaskDialogComponent implements AfterViewChecked, OnInit {
   removeUser(user: any) {
     this.selectedUsers = this.selectedUsers.filter(u => u._id !== user._id);
   }
-  
 }
-
-// {
-//     "name": "Task 6",
-//     "startDate": "2025-06-25T00:00:00.000Z",
-//     "dueDate": "2025-06-28T00:00:00.000Z",
-//     "progress": "not_started",
-//     "priority": "urgent",
-//     "description": "some description 123",
-//     "assigner": "6857b62d3124a31d6985b81a",
-//     "assignees": ["6857bd4474b82ba0aa4fa414", "6857bd6874b82ba0aa4fa416"]
-// }
