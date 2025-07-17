@@ -38,12 +38,20 @@
     &-row {
         display: flex;
         height: 3rem;
-        border-bottom: 1px solid $bg-300;
+        border-bottom: 1px solid #D7D3D0;
         align-items: center;
+        min-height: 3rem;
 
         &:hover {
             background: $bg-100;
         }
+    }
+
+    &-content {
+        overflow-y: scroll;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 14rem);
     }
 }
 
